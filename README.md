@@ -21,6 +21,27 @@ Simply run the script with optional config parameter
 
 `./gitlab-project-export.py -c /path/to/config.yaml`
 
+## Configuration
+System uses simple yaml file as configuration.
+
+Example below
+```
+gitlab:                                                   - gitlab configuration
+  access:
+    gitlab_url: "https://gitlab.com"                      - Gitlab url, official or your instance
+    token: "MY_PERSONAL_SECRET_TOKEN"                     - personal access token
+  projects:                                               - list of projects to export
+    - rvojcik/example-project
+
+backup:                                                   - backup configuration
+  project_dirs: True                                      - store projects in separate directories
+  destination: "/data/backup"                             - base backup dir
+  backup_name: "gitlab-com-{PROJECT_NAME}-{TIME}.tar.gz"  - backup file template
+  backup_time_format: "%Y%m%d"                            - TIME tamplate, use whatever compatible with
+                                                            python datetime - date.strftime()
+  ```
+  
+
 ### Backup Usecase in cron
 
 Create cron file in `/etc/cron.d/gitlab-backup`
