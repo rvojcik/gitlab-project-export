@@ -5,16 +5,24 @@ import sys
 import os
 import argparse
 import yaml
-from lib import config, gitlab
 from datetime import date
 import requests
+# Find our libs
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+from lib import config, gitlab
+
 
 return_code = 0
 
 if __name__ == '__main__':
     # Parsing arguments
     parser = argparse.ArgumentParser(
-        description= 'GitLab project Export', 
+        description=""" 
+        GitLab Project Export is
+        small project using Gitlab API for exporting whole gitlab
+        project with wikis, issues etc.
+        Good for migration or simple backup your gitlab projects.
+        """,
         epilog='Created by Robert Vojcik <robert@vojcik.net>')
     
     # Arguments

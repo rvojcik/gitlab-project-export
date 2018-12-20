@@ -43,7 +43,6 @@ class Api:
                     json = r.json()
 
                     # Check export status
-                    print(json)
                     if "export_status" in json.keys():
                         s = json["export_status"]
                         if s == "finished":
@@ -51,7 +50,6 @@ class Api:
                             break
                     else:
                         s = "unknown"
-                    print(s)
                     
                 else:
                     print("API not respond well with %s" %(str(r.status_code)), file=sys.stderr)
