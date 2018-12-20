@@ -1,0 +1,12 @@
+gitlab:
+  access:
+    gitlab_url: "https://gitlab.com"
+    token: "MY_PERSONAL_SECRET_TOKEN"
+  projects:
+    - rvojcik/example-project
+
+backup:
+  project_dirs: True
+  destination: "/data/backup"
+  backup_name: "gitlab-com-{PROJECT_NAME}-{TIME}.tar.gz"
+  backup_time_format: "%Y%m%d"
