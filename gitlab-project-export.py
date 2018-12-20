@@ -28,6 +28,8 @@ if __name__ == '__main__':
     # Arguments
     parser.add_argument('-c', dest='config', default='config.yaml',
                        help='sum the integers (default: find the max)') 
+    parser.add_argument('-d', dest='debug', default=False, action='store_const', const=True,
+                       help='Debug mode') 
     
     args = parser.parse_args()
 
@@ -39,19 +41,28 @@ if __name__ == '__main__':
     gitlab_url = c.config["gitlab"]["access"]["gitlab_url"]
 
     # Init gitlab api object
+    if args.debug:
+        print("%s, token"%(gitlab_url))
     gitlab = gitlab.Api(gitlab_url, token)
 
     # Export each project
     for project in c.config["gitlab"]["projects"]:
+        if args.debug:
+            print("Exporting %s"%(project))
         status = gitlab.project_export(project)
 
         # Export successful
         if status:
+            if args.debug:
+                print("Success for %s"%(project))
             # Download project to our destination
             if c.config["backup"]["project_dirs"]:
                 destination = c.config["backup"]["destination"] + "/" + project 
             else:
                 destination = c.config["backup"]["destination"]
+
+            if args.debug:
+                print(" Destination %s"%(destination))
 
             # Prepare actual date
             d = date.today()
@@ -62,12 +73,17 @@ if __name__ == '__main__':
             # Date in dest_file
             dest_file = dest_file.replace("{TIME}",d.strftime(c.config["backup"]["backup_time_format"]))
 
+            if args.debug:
+                print(" Destination file %s"%(dest_file))
+
             # Create directories
             if not os.path.isdir(destination):
                 os.makedirs(destination)
 
             # Get URL from gitlab object
             url = gitlab.download_url["api_url"]
+            if args.debug:
+                print(" URL: %s"%(url))
 
             # Download file
             r = requests.get(url, allow_redirects=True, stream=True, headers={"PRIVATE-TOKEN": token})

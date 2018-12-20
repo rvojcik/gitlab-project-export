@@ -21,3 +21,14 @@ Simply run the script with optional config parameter
 
 `./gitlab-project-export.py -c /path/to/config.yaml`
 
+### Backup Usecase in cron
+
+Create cron file in `/etc/cron.d/gitlab-backup`
+
+With following content
+```
+MAILTO=your_email@here.tld
+
+0 1 * * * root /path/to/cloned-repo/gitlab-project-export.py -c /etc/gitlab-export/config.yaml
+
+```
