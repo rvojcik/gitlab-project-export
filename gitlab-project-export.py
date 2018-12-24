@@ -27,7 +27,7 @@ if __name__ == '__main__':
     
     # Arguments
     parser.add_argument('-c', dest='config', default='config.yaml',
-                       help='sum the integers (default: find the max)') 
+                       help='config file') 
     parser.add_argument('-d', dest='debug', default=False, action='store_const', const=True,
                        help='Debug mode') 
     
