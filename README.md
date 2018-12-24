@@ -53,3 +53,19 @@ MAILTO=your_email@here.tld
 0 1 * * * root /path/to/cloned-repo/gitlab-project-export.py -c /etc/gitlab-export/config.yaml
 
 ```
+
+### Migration Usecase
+First create two config files, config1.yaml and config2.yaml.
+
+File config1.yaml is for exporting from gitlab1 and config2.yaml is config for importing into gitlab2.
+
+Gitlab2 needs only gitlab.access part configured.
+
+After you export all of your projects from gitlab1 using `gitlab-project-export.py` use 
+script `gitlab-project-import.py` with config2.yaml for importing into gitlab2.
+
+```
+./gitlab-project-import.py -c ./config2.yaml -f ./gitlab-export-group1-main_project-20181224.tar.gz -p "group1/main_project"
+
+```
+
