@@ -41,7 +41,7 @@ class Api:
         
         # Let's export project
         r = self.__api_export(url_project_path)
-        if ( str(r.status_code) == "202" ):
+        if ( (float(r.status_code) >= 200) and (float(r.status_code) < 300) ):
             # Api good, check for status
             max_tries = 20
             s = ""
@@ -91,7 +91,7 @@ class Api:
         
         # Let's import project
         r = self.__api_import(project_name, namespace, filepath)
-        if ( str(r.status_code) == "202" ):
+        if ( (float(r.status_code) >= 200) and (float(r.status_code) < 300) ):
             # Api good, check for status
             s = ""
             status_export = False
