@@ -17,28 +17,28 @@ return_code = 0
 if __name__ == '__main__':
     # Parsing arguments
     parser = argparse.ArgumentParser(
-        description=""" 
+        description="""
         GitLab Project Export is
         small project using Gitlab API for exporting whole gitlab
         project with wikis, issues etc.
         Good for migration or simple backup your gitlab projects.
         """,
         epilog='Created by Robert Vojcik <robert@vojcik.net>')
-    
+
     # Arguments
     parser.add_argument('-c', dest='config', default='config.yaml',
-                       help='config file') 
+                       help='config file')
     parser.add_argument('-f', dest='filepath', default=False,
-                       help='Path to gitlab exported project file') 
+                       help='Path to gitlab exported project file')
     parser.add_argument('-p', dest='project_path', default=False,
-                       help='Project path') 
+                       help='Project path')
     parser.add_argument('-d', dest='debug', default=False, action='store_const', const=True,
-                       help='Debug mode') 
-    
+                       help='Debug mode')
+
     args = parser.parse_args()
 
     if not os.path.isfile(args.config):
-        print("Unable to find config file %s" % (args.config)) 
+        print("Unable to find config file %s" % (args.config))
 
     c = config.Config(args.config)
     token = c.config["gitlab"]["access"]["token"]
