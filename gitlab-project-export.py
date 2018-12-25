@@ -53,42 +53,47 @@ if __name__ == '__main__':
     for project in c.config["gitlab"]["projects"]:
         if args.debug:
             print("Exporting %s" % (project))
+
+        # Download project to our destination
+        if c.config["backup"]["project_dirs"]:
+            destination = c.config["backup"]["destination"] + "/" + project
+        else:
+            destination = c.config["backup"]["destination"]
+
+        # Create directories
+        if not os.path.isdir(destination):
+            os.makedirs(destination)
+
+        if args.debug:
+            print(" Destination %s" % (destination))
+
+        # Prepare actual date
+        d = date.today()
+        # File template from config
+        file_tmpl = c.config["backup"]["backup_name"]
+        # Projectname in dest_file
+        dest_file = destination + "/" + file_tmpl.replace(
+            "{PROJECT_NAME}",
+            project.replace("/", "-")
+        )
+        # Date in dest_file
+        dest_file = dest_file.replace(
+            "{TIME}", d.strftime(c.config["backup"]["backup_time_format"]))
+
+        if args.debug:
+            print(" Destination file %s" % (dest_file))
+
+        if os.path.isfile(dest_file):
+            print("File %s already exists" % (dest_file), file=sys.stderr)
+            return_code += 1
+            continue
+
         status = gitlab.project_export(project)
 
         # Export successful
         if status:
             if args.debug:
                 print("Success for %s" % (project))
-            # Download project to our destination
-            if c.config["backup"]["project_dirs"]:
-                destination = c.config["backup"]["destination"] + "/" + project
-            else:
-                destination = c.config["backup"]["destination"]
-
-            if args.debug:
-                print(" Destination %s" % (destination))
-
-            # Prepare actual date
-            d = date.today()
-            # File template from config
-            file_tmpl = c.config["backup"]["backup_name"]
-            # Projectname in dest_file
-            dest_file = destination + "/" + file_tmpl.replace(
-                "{PROJECT_NAME}",
-                project.replace("/", "-")
-            )
-            # Date in dest_file
-            dest_file = dest_file.replace(
-                "{TIME}", d.strftime(c.config["backup"]["backup_time_format"])
-            )
-
-            if args.debug:
-                print(" Destination file %s" % (dest_file))
-
-            # Create directories
-            if not os.path.isdir(destination):
-                os.makedirs(destination)
-
             # Get URL from gitlab object
             url = gitlab.download_url["api_url"]
             if args.debug:
@@ -101,10 +106,19 @@ if __name__ == '__main__':
                 stream=True,
                 headers={"PRIVATE-TOKEN": token})
 
-            with open(dest_file, 'wb') as f:
-                for chunk in r.iter_content(chunk_size=1024):
-                    if chunk:
-                        f.write(chunk)
+            if r.status_code >= 200 and r.status_code < 300:
+                with open(dest_file, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=1024):
+                        if chunk:
+                            f.write(chunk)
+            else:
+                print(
+                    "Unable to download project %s. Got code %d: %s" % (
+                        project,
+                        r.status_code,
+                        r.text),
+                    file=sys.stderr)
+                return_code += 1
 
         else:
             # Export for project unsuccessful
