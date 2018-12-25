@@ -26,14 +26,18 @@ if __name__ == '__main__':
         epilog='Created by Robert Vojcik <robert@vojcik.net>')
 
     # Arguments
-    parser.add_argument('-c', dest='config', default='config.yaml',
-                       help='config file')
-    parser.add_argument('-f', dest='filepath', default=False,
-                       help='Path to gitlab exported project file')
-    parser.add_argument('-p', dest='project_path', default=False,
-                       help='Project path')
-    parser.add_argument('-d', dest='debug', default=False, action='store_const', const=True,
-                       help='Debug mode')
+    parser.add_argument(
+        '-c', dest='config', default='config.yaml',
+        help='config file')
+    parser.add_argument(
+        '-f', dest='filepath', default=False,
+        help='Path to gitlab exported project file')
+    parser.add_argument(
+        '-p', dest='project_path', default=False,
+        help='Project path')
+    parser.add_argument(
+        '-d', dest='debug', default=False, action='store_const', const=True,
+        help='Debug mode')
 
     args = parser.parse_args()
 
@@ -46,18 +50,18 @@ if __name__ == '__main__':
 
     # Init gitlab api object
     if args.debug:
-        print("%s, token"%(gitlab_url))
+        print("%s, token" % (gitlab_url))
     gitlab = gitlab.Api(gitlab_url, token)
 
     # import project
     if args.project_path and args.filepath and os.path.isfile(args.filepath):
         if args.debug:
-            print("Exporting %s"%(args.project_path))
+            print("Exporting %s" % (args.project_path))
         status = gitlab.project_import(args.project_path, args.filepath)
 
         # Import successful
         if status:
-            print("Import success for %s"%(args.project_path))
+            print("Import success for %s" % (args.project_path))
             sys.exit(0)
         else:
             print("Import was not successful")
@@ -66,4 +70,3 @@ if __name__ == '__main__':
     else:
         print("Error, you have to specify correct project_path and filepath")
         sys.exit(1)
-
