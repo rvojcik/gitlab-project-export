@@ -6,7 +6,7 @@ gitlab:
     - rvojcik/example-project
 
 backup:
-  project_dirs: True
+  project_dirs: False
   destination: "/data/backup"
   backup_name: "gitlab-com-{PROJECT_NAME}-{TIME}.tar.gz"
   backup_time_format: "%Y%m%d"
