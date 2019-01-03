@@ -17,12 +17,20 @@ class Api:
     def __api_export(self, project_url):
         '''Send export request to API'''
         self.download_url = None
-        return requests.post(self.api_url+"/projects/" + project_url + "/export", headers=self.headers)
+        try:
+            return requests.post(self.api_url+"/projects/" + project_url + "/export", headers=self.headers)
+        except requests.exceptions.RequestException as e:
+            print(e, file=sys.stderr)
+            sys.exit(1)
 
     def __api_import(self, project_name, namespace, filename):
         '''Send import request to API'''
         data = { "path": project_name, "namespace": namespace, "overwrite": True}
-        return requests.post(self.api_url+"/projects/import", data=data, files={"file": open(filename, 'r')}, headers=self.headers)
+        try:
+            return requests.post(self.api_url+"/projects/import", data=data, files={"file": open(filename, 'r')}, headers=self.headers)
+        except requests.exceptions.RequestException as e:
+            print(e, file=sys.stderr)
+            sys.exit(1)
 
     def __api_status(self,project_url):
         '''Check project status'''
@@ -34,11 +42,11 @@ class Api:
 
     def project_export(self, project_path):
         ''' Export Gitlab project
-        When project export is finished, store download URLs 
+        When project export is finished, store download URLs
         in objects variable download_url ready to be downloaded'''
 
         url_project_path = urllib.quote(project_path, safe='')
-        
+
         # Let's export project
         r = self.__api_export(url_project_path)
         if ( (float(r.status_code) >= 200) and (float(r.status_code) < 300) ):
@@ -50,7 +58,11 @@ class Api:
                 # Decrement tries
                 max_tries -= 1
 
-                r = self.__api_status(url_project_path)
+                try:
+                    r = self.__api_status(url_project_path)
+                except requests.exceptions.RequestException as e:
+                    print(e, file=sys.stderr)
+                    return False
 
                 # Check API reply status
                 if ( r.status_code == requests.codes.ok ):
@@ -64,9 +76,9 @@ class Api:
                             break
                     else:
                         s = "unknown"
-                    
+
                 else:
-                    print("API not respond well with %s" %(str(r.status_code)), file=sys.stderr)
+                    print("API not respond well with %s %s" %(str(r.status_code),str(r.text)), file=sys.stderr)
                     break
 
                 # Wait litle bit
@@ -76,11 +88,11 @@ class Api:
                 self.download_url = json["_links"]
                 return True
             else:
+                print("Export failed, %s" % (str(r.text)), file=sys.stderr)
                 return False
-                    
+
         else:
-            print("API not respond well with %s" %(str(r.status_code)), file=sys.stderr) 
-            print(r.text, file=sys.stderr)
+            print("API not respond well with %s %s" %(str(r.status_code), str(r.text)), file=sys.stderr)
             return False
 
     def project_import(self, project_path, filepath):
@@ -115,7 +127,7 @@ class Api:
                         s = "unknown"
                     
                 else:
-                    print("API not respond well with %s" %(str(r.status_code)), file=sys.stderr)
+                    print("API not respond well with %s %s" %(str(r.status_code), str(r.text)), file=sys.stderr)
                     break
 
                 # Wait litle bit
@@ -124,9 +136,10 @@ class Api:
             if status_import:
                 return True
             else:
+                print("Import failed, %s" % (str(r.text)), file=sys.stderr)
                 return False
                     
         else:
-            print("API not respond well with %s" %(str(r.status_code)), file=sys.stderr) 
+            print("API not respond well with %s %s" %(str(r.status_code), str(r.text)), file=sys.stderr)
             print(r.text, file=sys.stderr)
             return False
