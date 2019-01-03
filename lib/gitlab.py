@@ -5,12 +5,13 @@ import sys
 import time
 import os
 
+
 class Api:
     '''Api class for gitlab'''
 
-    def __init__(self,gitlab_url, token):
+    def __init__(self, gitlab_url, token):
         '''Init config object'''
-        self.headers = { "PRIVATE-TOKEN": token }
+        self.headers = {"PRIVATE-TOKEN": token}
         self.api_url = gitlab_url + "/api/v4"
         self.download_url = None
 
@@ -18,27 +19,43 @@ class Api:
         '''Send export request to API'''
         self.download_url = None
         try:
-            return requests.post(self.api_url+"/projects/" + project_url + "/export", headers=self.headers)
+            return requests.post(
+                self.api_url+"/projects/" +
+                project_url + "/export",
+                headers=self.headers)
         except requests.exceptions.RequestException as e:
             print(e, file=sys.stderr)
             sys.exit(1)
 
     def __api_import(self, project_name, namespace, filename):
         '''Send import request to API'''
-        data = { "path": project_name, "namespace": namespace, "overwrite": True}
+        data = {
+            "path": project_name,
+            "namespace": namespace,
+            "overwrite": True}
         try:
-            return requests.post(self.api_url+"/projects/import", data=data, files={"file": open(filename, 'r')}, headers=self.headers)
+            return requests.post(
+                self.api_url+"/projects/import",
+                data=data,
+                files={"file": open(filename, 'r')},
+                headers=self.headers)
         except requests.exceptions.RequestException as e:
             print(e, file=sys.stderr)
             sys.exit(1)
 
-    def __api_status(self,project_url):
+    def __api_status(self, project_url):
         '''Check project status'''
-        return requests.get(self.api_url+"/projects/" + project_url + "/export", headers=self.headers)
+        return requests.get(
+            self.api_url+"/projects/" +
+            project_url + "/export",
+            headers=self.headers)
 
-    def __api_import_status(self,project_url):
+    def __api_import_status(self, project_url):
         '''Check project import status'''
-        return requests.get(self.api_url+"/projects/" + project_url + "/import", headers=self.headers)
+        return requests.get(
+            self.api_url+"/projects/" +
+            project_url + "/import",
+            headers=self.headers)
 
     def project_export(self, project_path):
         ''' Export Gitlab project
@@ -49,7 +66,7 @@ class Api:
 
         # Let's export project
         r = self.__api_export(url_project_path)
-        if ( (float(r.status_code) >= 200) and (float(r.status_code) < 300) ):
+        if ((float(r.status_code) >= 200) and (float(r.status_code) < 300)):
             # Api good, check for status
             max_tries = 20
             s = ""
@@ -65,7 +82,7 @@ class Api:
                     return False
 
                 # Check API reply status
-                if ( r.status_code == requests.codes.ok ):
+                if (r.status_code == requests.codes.ok):
                     json = r.json()
 
                     # Check export status
@@ -78,7 +95,10 @@ class Api:
                         s = "unknown"
 
                 else:
-                    print("API not respond well with %s %s" %(str(r.status_code),str(r.text)), file=sys.stderr)
+                    print("API not respond well with %s %s" % (
+                        str(r.status_code),
+                        str(r.text)),
+                        file=sys.stderr)
                     break
 
                 # Wait litle bit
@@ -92,7 +112,10 @@ class Api:
                 return False
 
         else:
-            print("API not respond well with %s %s" %(str(r.status_code), str(r.text)), file=sys.stderr)
+            print("API not respond well with %s %s" % (
+                str(r.status_code),
+                str(r.text)),
+                file=sys.stderr)
             return False
 
     def project_import(self, project_path, filepath):
@@ -100,10 +123,10 @@ class Api:
         url_project_path = urllib.quote(project_path, safe='')
         project_name = os.path.basename(project_path)
         namespace = os.path.dirname(project_path)
-        
+
         # Let's import project
         r = self.__api_import(project_name, namespace, filepath)
-        if ( (float(r.status_code) >= 200) and (float(r.status_code) < 300) ):
+        if ((float(r.status_code) >= 200) and (float(r.status_code) < 300)):
             # Api good, check for status
             s = ""
             status_export = False
@@ -111,7 +134,7 @@ class Api:
                 r = self.__api_import_status(url_project_path)
 
                 # Check API reply status
-                if ( r.status_code == requests.codes.ok ):
+                if (r.status_code == requests.codes.ok):
                     json = r.json()
 
                     # Check export status
@@ -125,9 +148,12 @@ class Api:
                             break
                     else:
                         s = "unknown"
-                    
+
                 else:
-                    print("API not respond well with %s %s" %(str(r.status_code), str(r.text)), file=sys.stderr)
+                    print("API not respond well with %s %s" % (
+                        str(r.status_code),
+                        str(r.text)),
+                        file=sys.stderr)
                     break
 
                 # Wait litle bit
@@ -138,8 +164,11 @@ class Api:
             else:
                 print("Import failed, %s" % (str(r.text)), file=sys.stderr)
                 return False
-                    
+
         else:
-            print("API not respond well with %s %s" %(str(r.status_code), str(r.text)), file=sys.stderr)
+            print("API not respond well with %s %s" % (
+                str(r.status_code),
+                str(r.text)),
+                file=sys.stderr)
             print(r.text, file=sys.stderr)
             return False
