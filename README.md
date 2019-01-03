@@ -55,17 +55,45 @@ MAILTO=your_email@here.tld
 ```
 
 ### Migration Usecase
-First create two config files, config1.yaml and config2.yaml.
+First create two config files
 
-File config1.yaml is for exporting from gitlab1 and config2.yaml is config for importing into gitlab2.
+config1.yaml for exporting our project from gitlab.com
+```
+gitlab:                                                   - gitlab configuration
+  access:
+    gitlab_url: "https://gitlab.com"                      - Gitlab url, official or your instance
+    token: "MY_PERSONAL_SECRET_TOKEN"                     - personal access token
+  projects:                                               - list of projects to export
+    - rvojcik/project1
+    - rvojcik/project2
 
-Gitlab2 needs only gitlab.access part configured.
+backup:                                                   - backup configuration
+  project_dirs: False                                     - store projects in separate directories
+  destination: "/data/export-dir"                             - base backup dir
+  backup_name: "gitlab-com-{PROJECT_NAME}-{TIME}.tar.gz"  - backup file template
+  backup_time_format: "%Y%m%d"                            - TIME tamplate, use whatever compatible with
+                                                            python datetime - date.strftime()
+```
 
-After you export all of your projects from gitlab1 using `gitlab-project-export.py` use 
-script `gitlab-project-import.py` with config2.yaml for importing into gitlab2.
+and config2.yaml where we need only gitlab access part for importing projects to private gitlab instance
+```
+gitlab:                                                   - gitlab configuration
+  access:
+    gitlab_url: "https://gitlab.privatedomain.tld"        - Gitlab url, official or your instance
+    token: "MY_PERSONAL_SECRET_TOKEN"                     - personal access token
+```
+
+Now it's time to export our projects
+```
+./gitlab-project-export.py -c ./config1.yaml -d
+```
+Your projects are now exported in `/data/export-dir`
+
+After that we use `gitlab-project-import.py` with config2.yaml for importing into our pricate gitlab instance.
 
 ```
-./gitlab-project-import.py -c ./config2.yaml -f ./gitlab-export-group1-main_project-20181224.tar.gz -p "group1/main_project"
-
+./gitlab-project-import.py -c ./config2.yaml -f ./gitlab-com-rvojcik-project1-20181224.tar.gz -p "rvojcik/project1"
+./gitlab-project-import.py -c ./config2.yaml -f ./gitlab-com-rvojcik-project2-20181224.tar.gz -p "rvojcik/project2"
 ```
 
+Done ;)
