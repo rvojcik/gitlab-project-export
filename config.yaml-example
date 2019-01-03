@@ -1,12 +1,32 @@
+#
+# Gitlab configuration
+#
 gitlab:
   access:
     gitlab_url: "https://gitlab.com"
     token: "MY_PERSONAL_SECRET_TOKEN"
+  # Projects to export
   projects:
     - rvojcik/example-project
 
+#
+# Backup configuration
+#
 backup:
+  # Create separate directory for every project
   project_dirs: False
+  # Destination of the exports/backups
   destination: "/data/backup"
+  # Backup Name template
+  # Is it possible to use some placeholders in the name
+  #   {PROJECT_NAME} - Name of the project with full path
+  #   Path slashes is replaces with dashes.
+  #   Example:
+  #     rvojcik/project1 => rvojcik-project1
+  #
+  #   {TIME} - Time of the export
   backup_name: "gitlab-com-{PROJECT_NAME}-{TIME}.tar.gz"
+  # Time format tamplate
+  # Time is construct by python strftime.
+  # backup_time_format can be anything compatible with strftime
   backup_time_format: "%Y%m%d"
