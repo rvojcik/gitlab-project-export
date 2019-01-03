@@ -62,7 +62,11 @@ if __name__ == '__main__':
 
         # Create directories
         if not os.path.isdir(destination):
-            os.makedirs(destination)
+            try:
+                os.makedirs(destination)
+            except:
+                print("Unable to create directories %s" % (destination), file=sys.stderr)
+                sys.exit(1)
 
         if args.debug:
             print(" Destination %s" % (destination))
