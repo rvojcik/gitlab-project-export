@@ -105,8 +105,12 @@ class Api:
                 time.sleep(2)
 
             if status_export:
-                self.download_url = json["_links"]
-                return True
+                if "_links" in json.keys():
+                    self.download_url = json["_links"]
+                    return True
+                else:
+                    print("Unable to find download link in API response: %s" % (str(json))
+                    return False
             else:
                 print("Export failed, %s" % (str(r.text)), file=sys.stderr)
                 return False
