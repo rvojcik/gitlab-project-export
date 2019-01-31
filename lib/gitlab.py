@@ -109,7 +109,7 @@ class Api:
                     self.download_url = json["_links"]
                     return True
                 else:
-                    print("Unable to find download link in API response: %s" % (str(json))
+                    print("Unable to find download link in API response: %s" % (str(json)))
                     return False
             else:
                 print("Export failed, %s" % (str(r.text)), file=sys.stderr)
