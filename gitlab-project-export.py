@@ -50,7 +50,21 @@ if __name__ == '__main__':
     gitlab = gitlab.Api(gitlab_url, token)
 
     # Export each project
+    export_projects = []
     for project in c.config["gitlab"]["projects"]:
+        if '*' in project:
+            projects = gitlab.project_list(project)
+            if projects:
+                export_projects += projects
+            else:
+                print("Unable to get projects for %s" % (project), file=sys.stderr)
+        else:
+            export_projects.append(project)
+
+    if args.debug:
+        print("Projects to export: " + str(export_projects))
+
+    for project in export_projects:
         if args.debug:
             print("Exporting %s" % (project))
 

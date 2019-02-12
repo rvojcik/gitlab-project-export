@@ -4,6 +4,7 @@ import urllib
 import sys
 import time
 import os
+import re
 
 
 class Api:
@@ -14,13 +15,14 @@ class Api:
         self.headers = {"PRIVATE-TOKEN": token}
         self.api_url = gitlab_url + "/api/v4"
         self.download_url = None
+        self.project_array = False
 
     def __api_export(self, project_url):
         '''Send export request to API'''
         self.download_url = None
         try:
             return requests.post(
-                self.api_url+"/projects/" +
+                self.api_url + "/projects/" +
                 project_url + "/export",
                 headers=self.headers)
         except requests.exceptions.RequestException as e:
@@ -35,8 +37,8 @@ class Api:
             "overwrite": True}
         try:
             return requests.post(
-                self.api_url+"/projects/import",
-                data=data,
+                self.api_url + "/projects/import",
+                data = data,
                 files={"file": open(filename, 'r')},
                 headers=self.headers)
         except requests.exceptions.RequestException as e:
@@ -46,9 +48,30 @@ class Api:
     def __api_status(self, project_url):
         '''Check project status'''
         return requests.get(
-            self.api_url+"/projects/" +
+            self.api_url + "/projects/" +
             project_url + "/export",
             headers=self.headers)
+
+    def __api_get(self, endpoint):
+        ''' Get api endpoint data '''
+        try:
+            return requests.get(
+                self.api_url + endpoint,
+                headers = self.headers)
+        except requests.exceptions.RequestException as e:
+            print(e, file=sys.stderr)
+            sys.exit(1)
+
+    def __api_post(self, endpoint, data):
+        ''' POST api endpoint data '''
+        try:
+            return requests.post(
+                self.api_url + endpoint,
+                data = data,
+                headers = self.headers)
+        except requests.exceptions.RequestException as e:
+            print(e, file=sys.stderr)
+            sys.exit(1)
 
     def __api_import_status(self, project_url):
         '''Check project import status'''
@@ -56,6 +79,36 @@ class Api:
             self.api_url+"/projects/" +
             project_url + "/import",
             headers=self.headers)
+
+    def project_list(self, path_glob):
+        ''' List projects based on glob path '''
+        urlpath = '/projects?simple=True&membership=True&per_page=50'
+        page = 1
+        output = []
+        if not self.project_array:
+            while True:
+                r = self.__api_get(urlpath + "&page=" + str(page))
+                if r.status_code == 200:
+                    json = r.json()
+                    if len(json) > 0:
+                        for project_data in r.json():
+                            ppath = project_data["path_with_namespace"]
+                            output.append(ppath)
+                        page += 1
+                    else:
+                        break
+                else:
+                    print("API returned %s" % (str(r.status_code)), file=sys.stderr)
+                    return False
+            self.project_array = output
+
+        # Compare glob to projects
+        output = []
+        for project in self.project_array:
+            if re.match(path_glob, project):
+                output.append(project)
+
+        return output
 
     def project_export(self, project_path):
         ''' Export Gitlab project
