@@ -38,7 +38,7 @@ class Api:
         try:
             return requests.post(
                 self.api_url + "/projects/import",
-                data = data,
+                data=data,
                 files={"file": open(filename, 'r')},
                 headers=self.headers)
         except requests.exceptions.RequestException as e:
@@ -57,7 +57,7 @@ class Api:
         try:
             return requests.get(
                 self.api_url + endpoint,
-                headers = self.headers)
+                headers=self.headers)
         except requests.exceptions.RequestException as e:
             print(e, file=sys.stderr)
             sys.exit(1)
@@ -67,8 +67,8 @@ class Api:
         try:
             return requests.post(
                 self.api_url + endpoint,
-                data = data,
-                headers = self.headers)
+                data=data,
+                headers=self.headers)
         except requests.exceptions.RequestException as e:
             print(e, file=sys.stderr)
             sys.exit(1)
