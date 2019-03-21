@@ -141,7 +141,8 @@ class Api:
                     # Check export status
                     if "export_status" in json.keys():
                         s = json["export_status"]
-                        if s == "finished":
+                        # Export finished and _links appear in response
+                        if s == "finished" and "_links" in json.keys():
                             status_export = True
                             break
                     else:
@@ -155,7 +156,7 @@ class Api:
                     break
 
                 # Wait litle bit
-                time.sleep(2)
+                time.sleep(1)
 
             if status_export:
                 if "_links" in json.keys():
@@ -214,7 +215,7 @@ class Api:
                     break
 
                 # Wait litle bit
-                time.sleep(2)
+                time.sleep(1)
 
             if status_import:
                 return True
