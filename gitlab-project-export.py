@@ -7,6 +7,7 @@ import argparse
 import yaml
 from datetime import date
 import requests
+import re
 # Find our libs
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from lib import config, gitlab
@@ -51,15 +52,19 @@ if __name__ == '__main__':
 
     # Export each project
     export_projects = []
-    for project in c.config["gitlab"]["projects"]:
-        if '*' in project:
-            projects = gitlab.project_list(project)
-            if projects:
-                export_projects += projects
-            else:
-                print("Unable to get projects for %s" % (project), file=sys.stderr)
-        else:
-            export_projects.append(project)
+
+    # Get All member projects from gitlab
+    projects = gitlab.project_list()
+    if not projects:
+        print("Unable to get projects for your account", file=sys.stderr)
+        sys.exit(1)
+
+    # Check projects against config
+    # Create export_projects array
+    for project_pattern in c.config["gitlab"]["projects"]:
+        for gitlabProject in projects:
+            if re.match(project_pattern, gitlabProject):
+                export_projects.append(gitlabProject)
 
     if args.debug:
         print("Projects to export: " + str(export_projects))

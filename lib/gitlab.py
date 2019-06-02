@@ -80,7 +80,7 @@ class Api:
             project_url + "/import",
             headers=self.headers)
 
-    def project_list(self, path_glob):
+    def project_list(self, path_glob=""):
         ''' List projects based on glob path '''
         urlpath = '/projects?simple=True&membership=True&per_page=50'
         page = 1
