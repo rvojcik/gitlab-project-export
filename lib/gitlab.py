@@ -121,7 +121,7 @@ class Api:
         r = self.__api_export(url_project_path)
         if ((float(r.status_code) >= 200) and (float(r.status_code) < 300)):
             # Api good, check for status
-            max_tries = 20
+            max_tries = 30
             s = ""
             status_export = False
             while max_tries != 0:
@@ -156,7 +156,7 @@ class Api:
                     break
 
                 # Wait litle bit
-                time.sleep(1)
+                time.sleep(2)
 
             if status_export:
                 if "_links" in json.keys():
