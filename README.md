@@ -1,12 +1,11 @@
-# Breaking Changes 
-## 05-2020
-Code was modified to work with Python3, not longer compatible with Python2.
-
 # gitlab-project-export
 Simple python project for exporting gitlab projects with Export Project feature in GitLab API.
 
 Primary used for remote backup of projects in GitLab.com to private storage server.
 
+## Breaking Changes 
+### 05-2020
+Code was modified to work with Python3, not longer compatible with Python2.
 
 ## Prerequisite
 * Python Requests library, `sudo pip install requests`
