@@ -17,7 +17,7 @@ class Config:
     def config_open(self):
         try:
             self.conf_fh = open(self.config_file, 'r')
-        except IOError, e:
+        except IOError as e:
             print("({})".format(e))
             sys.exit(1)
 
@@ -25,4 +25,4 @@ class Config:
         self.conf_fh.close()
 
     def config_load(self):
-        self.config = yaml.load(self.conf_fh.read())
+        self.config = yaml.load(self.conf_fh.read(), Loader=yaml.FullLoader)

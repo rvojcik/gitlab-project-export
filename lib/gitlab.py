@@ -115,7 +115,7 @@ class Api:
         When project export is finished, store download URLs
         in objects variable download_url ready to be downloaded'''
 
-        url_project_path = urllib.quote(project_path, safe='')
+        url_project_path = urllib.parse.quote(project_path, safe='')
 
         # Let's export project
         r = self.__api_export(url_project_path)
