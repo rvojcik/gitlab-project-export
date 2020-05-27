@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 from __future__ import print_function
 import sys
@@ -8,6 +8,7 @@ import yaml
 from datetime import date
 import requests
 import re
+import time
 # Find our libs
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 from lib import config, gitlab
@@ -44,6 +45,12 @@ if __name__ == '__main__':
     c = config.Config(args.config)
     token = c.config["gitlab"]["access"]["token"]
     gitlab_url = c.config["gitlab"]["access"]["gitlab_url"]
+
+    # Check if there is wait between exports in config
+    if 'wait_between_exports' in c.config["gitlab"]:
+        wait_between_exports = c.config["gitlab"]["wait_between_exports"]
+    else:
+        wait_between_exports = 0
 
     # Init gitlab api object
     if args.debug:
@@ -147,5 +154,10 @@ if __name__ == '__main__':
             # Export for project unsuccessful
             print("Export failed for project %s" % (project), file=sys.stderr)
             return_code += 1
+        
+        # If set, wait between exports
+        if args.debug:
+            print("Waiting between exports for %d seconds" % (wait_between_exports))
+        time.sleep(wait_between_exports)
 
     sys.exit(return_code)

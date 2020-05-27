@@ -12,6 +12,15 @@ gitlab:
   projects:
     - rvojcik/example-project
     - rvojcik/group/*
+  # Wait Between Exports
+  # How many seconds to wait between projects to export.
+  # This is due rate-limiting in gitlab.com
+  # https://docs.gitlab.com/ee/user/project/settings/import_export.html#rate-limits
+  #
+  # If you break the limit API respond with 429 for your IP address for a while.
+  #
+  # When you are using this in your private gitlab instance you can set it to 0
+  wait_between_exports: 303
 
 #
 # Backup configuration
