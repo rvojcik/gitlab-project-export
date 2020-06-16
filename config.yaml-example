@@ -12,6 +12,10 @@ gitlab:
   projects:
     - rvojcik/example-project
     - rvojcik/group/*
+  # Membership attribute used when searching for projects
+  # If you want to export all projects from private gitlab instance
+  # sse False here. In big shared instances or gitlab.com use True
+  membership: True
   # Wait Between Exports
   # How many seconds to wait between projects to export.
   # This is due rate-limiting in gitlab.com

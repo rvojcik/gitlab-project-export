@@ -52,6 +52,12 @@ if __name__ == '__main__':
     else:
         wait_between_exports = 0
 
+    # Check if there is membership in config
+    if 'membership' in c.config["gitlab"]:
+        membership = c.config["gitlab"]["membership"]
+    else:
+        membership = True
+
     # Init gitlab api object
     if args.debug:
         print("%s, token" % (gitlab_url))
@@ -61,7 +67,7 @@ if __name__ == '__main__':
     export_projects = []
 
     # Get All member projects from gitlab
-    projects = gitlab.project_list()
+    projects = gitlab.project_list(membership=str(membership))
     if not projects:
         print("Unable to get projects for your account", file=sys.stderr)
         sys.exit(1)
