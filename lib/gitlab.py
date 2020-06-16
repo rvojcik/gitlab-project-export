@@ -80,9 +80,9 @@ class Api:
             project_url + "/import",
             headers=self.headers)
 
-    def project_list(self, path_glob=""):
+    def project_list(self, path_glob="", membership="True"):
         ''' List projects based on glob path '''
-        urlpath = '/projects?simple=True&membership=True&per_page=50'
+        urlpath = '/projects?simple=True&membership=%s&per_page=50' % (membership)
         page = 1
         output = []
         if not self.project_array:
