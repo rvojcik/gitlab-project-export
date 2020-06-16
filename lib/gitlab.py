@@ -183,7 +183,7 @@ class Api:
 
     def project_import(self, project_path, filepath):
         ''' Import project to GitLab from file'''
-        url_project_path = urllib.quote(project_path, safe='')
+        url_project_path = urllib.parse.quote(project_path, safe='')
         project_name = os.path.basename(project_path)
         namespace = os.path.dirname(project_path)
 
