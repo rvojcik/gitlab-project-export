@@ -39,7 +39,7 @@ class Api:
             return requests.post(
                 self.api_url + "/projects/import",
                 data=data,
-                files={"file": open(filename, 'r')},
+                files={"file": open(filename, 'rb')},
                 headers=self.headers)
         except requests.exceptions.RequestException as e:
             print(e, file=sys.stderr)
