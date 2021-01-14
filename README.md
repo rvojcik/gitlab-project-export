@@ -16,12 +16,20 @@ Simply install via pip:
 
 `pip install git+https://github.com/rvojcik/gitlab-project-export`
 
-or clone the project and install dependecies manually:
+or clone the project and install manually:
 
 ```
 git clone https://github.com/rvojcik/gitlab-project-export
-pip install pyyaml
-pip install requests
+cd gitlab-project-export/
+sudo python3 setup.py install
+```
+
+or use it without installing to your environment (install only requirements):
+
+```
+git clone https://github.com/rvojcik/gitlab-project-export
+cd gitlab-project-export/
+pip install -f requirements.txt
 ```
 
 Prepare and edit your config file
