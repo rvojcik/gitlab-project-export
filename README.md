@@ -8,14 +8,21 @@ Primary used for remote backup of projects in GitLab.com to private storage serv
 Code was modified to work with Python3, not longer compatible with Python2.
 
 ## Prerequisite
-* Python Requests library, `sudo pip install requests`
 * Configured Gitlab API Token, https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html
 
 ## Install
 
-Simple just clone the project.
+Simply install via pip:
 
-`git clone https://github.com/rvojcik/gitlab-project-export`
+`pip install git+https://github.com/rvojcik/gitlab-project-export`
+
+or clone the project and install dependecies manually:
+
+```
+git clone https://github.com/rvojcik/gitlab-project-export
+pip install pyyaml
+pip install requests
+```
 
 Prepare and edit your config file
 
