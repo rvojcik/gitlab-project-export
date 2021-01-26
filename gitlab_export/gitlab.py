@@ -10,12 +10,13 @@ import re
 class Api:
     '''Api class for gitlab'''
 
-    def __init__(self, gitlab_url, token):
+    def __init__(self, gitlab_url, token, ssl_verify=True):
         '''Init config object'''
         self.headers = {"PRIVATE-TOKEN": token}
         self.api_url = gitlab_url + "/api/v4"
         self.download_url = None
         self.project_array = False
+        self.ssl_verify = ssl_verify
 
     def __api_export(self, project_url):
         '''Send export request to API'''
@@ -24,7 +25,8 @@ class Api:
             return requests.post(
                 self.api_url + "/projects/" +
                 project_url + "/export",
-                headers=self.headers)
+                headers=self.headers,
+                verify=self.ssl_verify)
         except requests.exceptions.RequestException as e:
             print(e, file=sys.stderr)
             sys.exit(1)
@@ -40,6 +42,7 @@ class Api:
                 self.api_url + "/projects/import",
                 data=data,
                 files={"file": open(filename, 'rb')},
+                verify=self.ssl_verify,
                 headers=self.headers)
         except requests.exceptions.RequestException as e:
             print(e, file=sys.stderr)
@@ -50,6 +53,7 @@ class Api:
         return requests.get(
             self.api_url + "/projects/" +
             project_url + "/export",
+            verify=self.ssl_verify,
             headers=self.headers)
 
     def __api_get(self, endpoint):
@@ -57,6 +61,7 @@ class Api:
         try:
             return requests.get(
                 self.api_url + endpoint,
+                verify=self.ssl_verify,
                 headers=self.headers)
         except requests.exceptions.RequestException as e:
             print(e, file=sys.stderr)
@@ -68,6 +73,7 @@ class Api:
             return requests.post(
                 self.api_url + endpoint,
                 data=data,
+                verify=self.ssl_verify,
                 headers=self.headers)
         except requests.exceptions.RequestException as e:
             print(e, file=sys.stderr)
@@ -78,6 +84,7 @@ class Api:
         return requests.get(
             self.api_url+"/projects/" +
             project_url + "/import",
+            verify=self.ssl_verify,
             headers=self.headers)
 
     def project_list(self, path_glob="", membership="True"):

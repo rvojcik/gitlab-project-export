@@ -47,11 +47,12 @@ if __name__ == '__main__':
     c = config.Config(args.config)
     token = c.config["gitlab"]["access"]["token"]
     gitlab_url = c.config["gitlab"]["access"]["gitlab_url"]
+    ssl_verify = c.config["gitlab"]["access"]["ssl_verify"]
 
     # Init gitlab api object
     if args.debug:
         print("%s, token" % (gitlab_url))
-    gitlab = gitlab.Api(gitlab_url, token)
+    gitlab = gitlab.Api(gitlab_url, token, ssl_verify)
 
     # import project
     if args.project_path and args.filepath and os.path.isfile(args.filepath):

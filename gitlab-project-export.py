@@ -45,6 +45,7 @@ if __name__ == '__main__':
     c = config.Config(args.config)
     token = c.config["gitlab"]["access"]["token"]
     gitlab_url = c.config["gitlab"]["access"]["gitlab_url"]
+    ssl_verify = c.config["gitlab"]["access"]["ssl_verify"]
 
     # Check if there is wait between exports in config
     if 'wait_between_exports' in c.config["gitlab"]:
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     # Init gitlab api object
     if args.debug:
         print("%s, token" % (gitlab_url))
-    gitlab = gitlab.Api(gitlab_url, token)
+    gitlab = gitlab.Api(gitlab_url, token, ssl_verify)
 
     # Export each project
     export_projects = []
@@ -140,6 +141,7 @@ if __name__ == '__main__':
                 url,
                 allow_redirects=True,
                 stream=True,
+                verify=ssl_verify,
                 headers={"PRIVATE-TOKEN": token})
 
             if r.status_code >= 200 and r.status_code < 300:

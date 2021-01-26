@@ -9,6 +9,14 @@ gitlab:
   access:
     gitlab_url: "https://gitlab.com"
     token: "MY_PERSONAL_SECRET_TOKEN"
+    # SSL verify
+    # Correspond to verify option in request doc:
+    # https://2.python-requests.org/en/master/api/#requests.Session.merge_environment_settings
+    # Can be boolean to control whether we verify the ssl server certificate or string in which case it must be a path to CA bundle
+    # Default is true
+    # If you set it to False, you will get urllib warnings. To supress them set environment variable:
+    # - export PYTHONWARNINGS="ignore:Unverified HTTPS request"
+    ssl_verify: True
   projects:
     - rvojcik/example-project
     - rvojcik/group/*
