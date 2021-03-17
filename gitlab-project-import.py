@@ -18,7 +18,7 @@ if __name__ == '__main__':
     # Parsing arguments
     parser = argparse.ArgumentParser(
         description="""
-        GitLab Project Export is
+        GitLab Project Import is
         small project using Gitlab API for exporting whole gitlab
         project with wikis, issues etc.
         Good for migration or simple backup your gitlab projects.
@@ -57,7 +57,7 @@ if __name__ == '__main__':
     # import project
     if args.project_path and args.filepath and os.path.isfile(args.filepath):
         if args.debug:
-            print("Exporting %s" % (args.project_path))
+            print("Importing %s" % (args.project_path))
         status = gitlab.project_import(args.project_path, args.filepath)
 
         # Import successful
