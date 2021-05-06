@@ -15,6 +15,8 @@ setup(
     description=('Simple python project for exporting gitlab projects '
                  'with Export Project feature in GitLab API.'),
     long_description=long_description,
+    long_description_content_type="text/markdown",
+    include_package_data=True,
     author='Robert Vojcik',
     author_email='robert@vojcik.net',
     url='https://github.com/rvojcik/gitlab-project-export',

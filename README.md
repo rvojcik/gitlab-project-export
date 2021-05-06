@@ -5,9 +5,11 @@ Primary used for remote backup of projects in GitLab.com to private storage serv
 
 ## Breaking Changes 
 ### 05-2020
+
 Code was modified to work with Python3, not longer compatible with Python2.
 
 ## Prerequisite
+
 * Configured Gitlab API Token, https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html
 
 ## Install
