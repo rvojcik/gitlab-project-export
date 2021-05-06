@@ -1,0 +1,30 @@
+.build_script: &build_job
+    stage: build
+    allow_failure: false
+    only:
+        - tags
+    script:
+        - pip install --upgrade setuptools wheel
+        - python setup.py sdist bdist_wheel
+    artifacts:
+        paths:
+            - dist/
+
+stages:
+    - build
+    - publish
+
+build_python3:
+    <<: *build_job
+    image: python:3.6
+
+publish_package:
+    stage: publish
+    allow_failure: false
+    only:
+        - tags
+    image: python:3.6
+    script:
+        - pip install --upgrade setuptools wheel twine
+        - ls -l dist/*
+        - twine upload dist/*
