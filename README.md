@@ -16,6 +16,10 @@ Code was modified to work with Python3, not longer compatible with Python2.
 
 Simply install via pip:
 
+`pip install gitlab-project-export`
+
+or
+
 `pip install git+https://github.com/rvojcik/gitlab-project-export`
 
 or clone the project and install manually:
