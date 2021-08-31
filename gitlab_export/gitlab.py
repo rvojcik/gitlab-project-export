@@ -117,7 +117,7 @@ class Api:
 
         return output
 
-    def project_export(self, project_path):
+    def project_export(self, project_path, max_tries_number):
         ''' Export Gitlab project
         When project export is finished, store download URLs
         in objects variable download_url ready to be downloaded'''
@@ -128,7 +128,6 @@ class Api:
         r = self.__api_export(url_project_path)
         if ((float(r.status_code) >= 200) and (float(r.status_code) < 300)):
             # Api good, check for status
-            max_tries_number = 10
             max_tries = max_tries_number
             s = ""
             status_export = False
@@ -168,7 +167,7 @@ class Api:
                     break
 
                 # Wait litle bit
-                time.sleep(2)
+                time.sleep(5)
 
             if status_export:
                 if "_links" in json.keys():
