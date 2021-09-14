@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
 from __future__ import print_function
-import sys
 import os
+import re
+import sys
+import time
 import argparse
-import yaml
 from datetime import date
 import requests
-import re
-import time
+from gitlab_export import config, gitlab
+
 # Find our libs
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-from gitlab_export import config, gitlab
 
 
 return_code = 0
@@ -47,17 +47,10 @@ if __name__ == '__main__':
     gitlab_url = c.config["gitlab"]["access"]["gitlab_url"]
     ssl_verify = c.config["gitlab"]["access"]["ssl_verify"]
 
-    # Check if there is wait between exports in config
-    if 'wait_between_exports' in c.config["gitlab"]:
-        wait_between_exports = c.config["gitlab"]["wait_between_exports"]
-    else:
-        wait_between_exports = 0
-
-    # Check if there is membership in config
-    if 'membership' in c.config["gitlab"]:
-        membership = c.config["gitlab"]["membership"]
-    else:
-        membership = True
+    # Check additional config
+    wait_between_exports = c.config['gitlab'].get('wait_between_exports', 0)
+    membership = c.config['gitlab'].get('membership', True)
+    max_tries_number = c.config['gitlab'].get('max_tries_number', 12)
 
     # Init gitlab api object
     if args.debug:
@@ -87,17 +80,16 @@ if __name__ == '__main__':
         if args.debug:
             print("Exporting %s" % (project))
 
-        # Download project to our destination
+        # Download project to our destinationc
+        destination = c.config["backup"]["destination"]
         if c.config["backup"]["project_dirs"]:
-            destination = c.config["backup"]["destination"] + "/" + project
-        else:
-            destination = c.config["backup"]["destination"]
+            destination += "/" + project
 
         # Create directories
         if not os.path.isdir(destination):
             try:
                 os.makedirs(destination)
-            except:
+            except Exception:
                 print("Unable to create directories %s" % (destination), file=sys.stderr)
                 sys.exit(1)
 
@@ -125,7 +117,7 @@ if __name__ == '__main__':
             return_code += 1
             continue
 
-        status = gitlab.project_export(project)
+        status = gitlab.project_export(project, max_tries_number)
 
         # Export successful
         if status:
@@ -166,6 +158,7 @@ if __name__ == '__main__':
         # If set, wait between exports
         if args.debug:
             print("Waiting between exports for %d seconds" % (wait_between_exports))
-        time.sleep(wait_between_exports)
+        if project != export_projects[-1]:
+            time.sleep(wait_between_exports)
 
     sys.exit(return_code)

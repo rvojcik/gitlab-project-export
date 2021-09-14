@@ -41,4 +41,3 @@ class Config:
 
     def config_load(self):
         self.config = yaml.load(self.conf_fh.read(), Loader=yaml.FullLoader)
-
