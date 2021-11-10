@@ -6,7 +6,7 @@ import re
 import sys
 import time
 import argparse
-from datetime import date
+from datetime import datetime
 import requests
 from gitlab_export import config, gitlab
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
         if args.debug:
             print("Exporting %s" % (project))
 
-        # Download project to our destinationc
+        # Download project to our destination
         destination = c.config["backup"]["destination"]
         if c.config["backup"]["project_dirs"]:
             destination += "/" + project
@@ -97,7 +97,7 @@ if __name__ == '__main__':
             print(" Destination %s" % (destination))
 
         # Prepare actual date
-        d = date.today()
+        d = datetime.now()
         # File template from config
         file_tmpl = c.config["backup"]["backup_name"]
         # Projectname in dest_file
@@ -107,7 +107,7 @@ if __name__ == '__main__':
         )
         # Date in dest_file
         dest_file = dest_file.replace(
-            "{TIME}", d.strftime(c.config["backup"]["backup_time_format"]))
+            "{TIME}", d.strftime(c.config["backup"]["backup_time_format"].replace(" ", "_")))
 
         if args.debug:
             print(" Destination file %s" % (dest_file))

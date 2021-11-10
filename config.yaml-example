@@ -2,7 +2,7 @@
 # Gitlab configuration
 #
 # It is possible to use globbing in project names
-# aka
+# Example:
 #  - group/*
 #  - user/*/documentation
 gitlab:
@@ -10,11 +10,11 @@ gitlab:
     gitlab_url: "https://gitlab.com"
     token: "MY_PERSONAL_SECRET_TOKEN"
     # SSL verify
-    # Correspond to verify option in request doc:
+    # Corresponds to verify option in request doc:
     # https://2.python-requests.org/en/master/api/#requests.Session.merge_environment_settings
     # Can be boolean to control whether we verify the ssl server certificate or string in which case it must be a path to CA bundle
-    # Default is true
-    # If you set it to False, you will get urllib warnings. To supress them set environment variable:
+    # Default is True
+    # If you set it to False, you will get urllib warnings. To supress them, set environment variable:
     # - export PYTHONWARNINGS="ignore:Unverified HTTPS request"
     ssl_verify: True
   projects:
@@ -22,16 +22,16 @@ gitlab:
     - rvojcik/group/*
   # Membership attribute used when searching for projects
   # If you want to export all projects from private gitlab instance
-  # sse False here. In big shared instances or gitlab.com use True
+  # use False here. In big shared instances or gitlab.com, use True
   membership: True
   # Wait Between Exports
   # How many seconds to wait between projects to export.
   # This is due rate-limiting in gitlab.com
   # https://docs.gitlab.com/ee/user/project/settings/import_export.html#rate-limits
   #
-  # If you break the limit API respond with 429 for your IP address for a while.
+  # If you break the limit, API responds with 429 for your IP address for a while.
   #
-  # When you are using this in your private gitlab instance you can set it to 0
+  # When you are using this in your private gitlab instance, you can set it to 0
   wait_between_exports: 303
 
 #
@@ -45,16 +45,19 @@ backup:
   destination: "/data/backup"
 
   # Backup Name template
-  # Is it possible to use some placeholders in the name
+  # It is possible to use some placeholders in the name
   #   {PROJECT_NAME} - Name of the project with full path
-  #   Path slashes is replaces with dashes.
+  #   Path slashes are replaced with dashes.
   #   Example:
   #     rvojcik/project1 => rvojcik-project1
   #
   #   {TIME} - Time of the export
   backup_name: "gitlab-com-{PROJECT_NAME}-{TIME}.tar.gz"
 
-  # Time format tamplate
-  # Time is construct by python strftime.
+  # Time format template
+  # Time is constructed by python strftime.
   # backup_time_format can be anything compatible with strftime
+  #   Blank spaces are replaced with underscores.
+  #   Example:
+  #     %Y%m%d %H%M => %Y%m%d_%H%M
   backup_time_format: "%Y%m%d"
