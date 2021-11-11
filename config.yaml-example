@@ -33,6 +33,9 @@ gitlab:
   #
   # When you are using this in your private gitlab instance, you can set it to 0
   wait_between_exports: 303
+  # Maximum Retries
+  # Number of times to retry, if the export fails
+  max_tries_number: 12
 
 #
 # Backup configuration
