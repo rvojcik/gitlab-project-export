@@ -20,10 +20,10 @@ if __name__ == '__main__':
     # Parsing arguments
     parser = argparse.ArgumentParser(
         description="""
-        GitLab Project Export is
-        small project using Gitlab API for exporting whole gitlab
+        GitLab Project Export is a
+        small project using GitLab API for exporting whole gitlab
         project with wikis, issues etc.
-        Good for migration or simple backup your gitlab projects.
+        Good for migration or simple backup of your gitlab projects.
         """,
         epilog='Created by Robert Vojcik <robert@vojcik.net>')
 
@@ -35,6 +35,10 @@ if __name__ == '__main__':
     parser.add_argument(
         '-d', dest='debug', default=False, action='store_const',
         const=True, help='Debug mode'
+    )
+    parser.add_argument(
+        '-f', dest='force', default=False, action='store_const',
+        const=True, help='Force mode - overwrite backup file if exists'
     )
 
     args = parser.parse_args()
@@ -113,9 +117,13 @@ if __name__ == '__main__':
             print(" Destination file %s" % (dest_file))
 
         if os.path.isfile(dest_file):
-            print("File %s already exists" % (dest_file), file=sys.stderr)
-            return_code += 1
-            continue
+            if not args.force:
+                print("File %s already exists" % (dest_file), file=sys.stderr)
+                return_code += 1
+                continue
+            else:
+                print("File %s already exists - will be overwritten" % (dest_file))
+                os.remove(dest_file)
 
         status = gitlab.project_export(project, max_tries_number)
 
@@ -154,11 +162,11 @@ if __name__ == '__main__':
             # Export for project unsuccessful
             print("Export failed for project %s" % (project), file=sys.stderr)
             return_code += 1
-        
+
         # If set, wait between exports
-        if args.debug:
-            print("Waiting between exports for %d seconds" % (wait_between_exports))
         if project != export_projects[-1]:
+            if args.debug:
+                print("Waiting between exports for %d seconds" % (wait_between_exports))
             time.sleep(wait_between_exports)
 
     sys.exit(return_code)
