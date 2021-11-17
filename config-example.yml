@@ -41,11 +41,11 @@ gitlab:
 # Backup configuration
 #
 backup:
-  # Create separate directory for every project
-  project_dirs: False
-
   # Destination of the exports/backups
   destination: "/data/backup"
+
+  # Create separate directory for every project
+  project_dirs: False
 
   # Backup Name template
   # It is possible to use some placeholders in the name
@@ -64,3 +64,9 @@ backup:
   #   Example:
   #     %Y%m%d %H%M => %Y%m%d_%H%M
   backup_time_format: "%Y%m%d"
+
+  # Retention period (in days)
+  # backup files older than this period will be deleted
+  # retention_period can be any positive number
+  # specify 0 if you want to skip the deletion
+  retention_period: 0
