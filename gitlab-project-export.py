@@ -55,6 +55,10 @@ if __name__ == '__main__':
     wait_between_exports = c.config['gitlab'].get('wait_between_exports', 0)
     membership = c.config['gitlab'].get('membership', True)
     max_tries_number = c.config['gitlab'].get('max_tries_number', 12)
+    retention_period = c.config['backup'].get('retention_period', 0)
+    if not ((type(retention_period) == int or type(retention_period) == float) and (retention_period >= 0)):
+        print("Invalid value for retention_period. ignoring")
+        retention_period = 0
 
     # Init gitlab api object
     if args.debug:
@@ -125,6 +129,24 @@ if __name__ == '__main__':
                 print("File %s already exists - will be overwritten" % (dest_file))
                 os.remove(dest_file)
 
+        # Purge old files, if applicable
+        if retention_period > 0:
+            if args.debug:
+                print(" Purging files older than %.2f days in the folder %s" % (retention_period, destination))
+
+            now = time.time()
+            for f in os.listdir(destination):
+                if not f.endswith(".tar.gz"):
+                    continue
+
+                f = os.path.join(destination, f)
+                if os.path.isfile(f):
+                    if os.stat(f).st_mtime < now - (retention_period * 86400):
+                        if args.debug:
+                            print("   deleting backup %s" % (f))
+                        os.remove(f)
+
+        # Initiate export
         status = gitlab.project_export(project, max_tries_number)
 
         # Export successful
