@@ -87,9 +87,9 @@ class Api:
             verify=self.ssl_verify,
             headers=self.headers)
 
-    def project_list(self, path_glob="", membership="True"):
+    def project_list(self, path_glob="", membership="True", archived="False"):
         ''' List projects based on glob path '''
-        urlpath = '/projects?simple=True&membership=%s&per_page=50' % (membership)
+        urlpath = '/projects?simple=True&membership=%s&archived=%s&per_page=50' % (membership, archived)
         page = 1
         output = []
         if not self.project_array:

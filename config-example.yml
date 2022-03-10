@@ -36,6 +36,12 @@ gitlab:
   # Maximum Retries
   # Number of times to retry, if the export fails
   max_tries_number: 12
+  # Whether to include archived projects
+  include_archived: False
+  # List of projects (or patterns) to exclude
+  exclude_projects:
+    - rvojcik/exclude-me
+    - rvojcik/archived/*
 
 #
 # Backup configuration
