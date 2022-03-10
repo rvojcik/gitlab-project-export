@@ -61,6 +61,7 @@ if __name__ == '__main__':
     include_archived = c.config['gitlab'].get('include_archived', False)
     max_tries_number = c.config['gitlab'].get('max_tries_number', 12)
     retention_period = c.config['backup'].get('retention_period', 0)
+    exclude_projects = c.config["gitlab"].get('exclude_projects', [])
     if not ((type(retention_period) == int or type(retention_period) == float) and (retention_period >= 0)):
         print("Invalid value for retention_period. ignoring")
         retention_period = 0
@@ -87,7 +88,7 @@ if __name__ == '__main__':
                 export_projects.append(gitlabProject)
 
     # Remove any projects that are marked as excluded
-    for ignored_project_pattern in c.config["gitlab"]["exclude_projects"]:
+    for ignored_project_pattern in exclude_projects:
         for gitlabProject in projects:
             if re.match(ignored_project_pattern, gitlabProject):
                 if args.debug:
