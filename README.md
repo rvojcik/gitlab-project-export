@@ -1,9 +1,11 @@
 # gitlab-project-export
-Simple python project for exporting gitlab projects with Export Project feature in GitLab API.
+
+Simple Python project for exporting gitlab projects with Export Project feature in GitLab API.
 
 Primarily useful for remote backup of projects in GitLab.com to private storage server.
 
-## Breaking Changes 
+## Breaking Changes
+
 ### 05-2020
 
 Code was modified to work with Python3, not longer compatible with Python2.
@@ -24,7 +26,7 @@ or
 
 or clone the project and install manually:
 
-```
+```bash
 git clone https://github.com/rvojcik/gitlab-project-export
 cd gitlab-project-export/
 sudo python3 setup.py install
@@ -32,7 +34,7 @@ sudo python3 setup.py install
 
 or use it without installing to your environment (install only requirements):
 
-```
+```bash
 git clone https://github.com/rvojcik/gitlab-project-export
 cd gitlab-project-export/
 pip install -f requirements.txt
@@ -40,7 +42,7 @@ pip install -f requirements.txt
 
 ## Usage
 
-```
+```bash
 usage: gitlab-project-export.py [-h] [-c CONFIG] [-d] [-f]
 
 optional arguments:
@@ -48,8 +50,10 @@ optional arguments:
   -c CONFIG   config file
   -d          Debug mode
   -f          Force mode - overwrite backup file if exists
+  -n          Only print what would be done, without doing it
 ```
-```
+
+```bash
 usage: gitlab-project-import.py [-h] [-c CONFIG] [-f FILEPATH] [-p PROJECT_PATH] [-d]
 
 optional arguments:
@@ -59,6 +63,7 @@ optional arguments:
   -p PROJECT_PATH  Project path
   -d               Debug mode
 ```
+
 Prepare and edit your config file
 
 `mv config-example.yml config.yml`
@@ -68,9 +73,11 @@ Simply run the script with optional config parameter
 `./gitlab-project-export.py -c /path/to/config.yml`
 
 ## Configuration
+
 System uses simple yaml file as configuration.
 
 Example below
+
 ```
 gitlab:                                                   - gitlab configuration
   access:
@@ -88,23 +95,25 @@ backup:                                                   - backup configuration
   retention_period: 3                                     - purge files in the destination older than the specified value (in days)
   ```
 
-
-### Backup Usecase in cron
+### Backup use-case in cron
 
 Create cron file in `/etc/cron.d/gitlab-backup`
 
 With following content
-```
+
+```bash
 MAILTO=your_email@here.tld
 
 0 1 * * * root /path/to/cloned-repo/gitlab-project-export.py -c /etc/gitlab-export/config.yml
 
 ```
 
-### Migration Usecase
+### Migration use-case
+
 First create two config files
 
-config1.yml for exporting our project from gitlab.com
+`config1.yml` for exporting our project from gitlab.com
+
 ```
 gitlab:                                                   - gitlab configuration
   access:
@@ -121,7 +130,8 @@ backup:                                                   - backup configuration
                                                             python datetime - date.strftime()
 ```
 
-and config2.yml where we need only gitlab access part for importing projects to private gitlab instance
+and `config2.yml` where we need only gitlab access part for importing projects to private gitlab instance
+
 ```
 gitlab:                                                   - gitlab configuration
   access:
@@ -130,14 +140,16 @@ gitlab:                                                   - gitlab configuration
 ```
 
 Now it's time to export our projects
-```
+
+```bash
 ./gitlab-project-export.py -c ./config1.yml -d
 ```
+
 Your projects are now exported in `/data/export-dir`
 
-After that we use `gitlab-project-import.py` with config2.yml for importing into our pricate gitlab instance.
+After that we use `gitlab-project-import.py` with `config2.yml` for importing into our pricate gitlab instance.
 
-```
+```bash
 ./gitlab-project-import.py -c ./config2.yml -f ./gitlab-com-rvojcik-project1-20181224.tar.gz -p "rvojcik/project1"
 ./gitlab-project-import.py -c ./config2.yml -f ./gitlab-com-rvojcik-project2-20181224.tar.gz -p "rvojcik/project2"
 ```

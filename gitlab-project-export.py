@@ -40,6 +40,10 @@ if __name__ == '__main__':
         '-f', dest='force', default=False, action='store_const',
         const=True, help='Force mode - overwrite backup file if exists'
     )
+    parser.add_argument(
+        '-n', dest='noop', default=False, action='store_const',
+        const=True, help='Only print what would be done, without doing it'
+    )
 
     args = parser.parse_args()
 
@@ -54,8 +58,10 @@ if __name__ == '__main__':
     # Check additional config
     wait_between_exports = c.config['gitlab'].get('wait_between_exports', 0)
     membership = c.config['gitlab'].get('membership', True)
+    include_archived = c.config['gitlab'].get('include_archived', False)
     max_tries_number = c.config['gitlab'].get('max_tries_number', 12)
     retention_period = c.config['backup'].get('retention_period', 0)
+    exclude_projects = c.config["gitlab"].get('exclude_projects', [])
     if not ((type(retention_period) == int or type(retention_period) == float) and (retention_period >= 0)):
         print("Invalid value for retention_period. ignoring")
         retention_period = 0
@@ -69,7 +75,7 @@ if __name__ == '__main__':
     export_projects = []
 
     # Get All member projects from gitlab
-    projects = gitlab.project_list(membership=str(membership))
+    projects = gitlab.project_list(membership=str(membership), archived=str(include_archived))
     if not projects:
         print("Unable to get projects for your account", file=sys.stderr)
         sys.exit(1)
@@ -81,8 +87,20 @@ if __name__ == '__main__':
             if re.match(project_pattern, gitlabProject):
                 export_projects.append(gitlabProject)
 
+    # Remove any projects that are marked as excluded
+    for ignored_project_pattern in exclude_projects:
+        for gitlabProject in projects:
+            if re.match(ignored_project_pattern, gitlabProject):
+                if args.debug:
+                    print("Removing project '%s' from export (exclusion: '%s'): " % (str(gitlabProject), str(ignored_project_pattern)))
+                export_projects.remove(gitlabProject)
+
     if args.debug:
         print("Projects to export: " + str(export_projects))
+
+    if args.noop:
+        print("Not running actual export because of -n/--noop flag.")
+        sys.exit(0)
 
     for project in export_projects:
         if args.debug:
